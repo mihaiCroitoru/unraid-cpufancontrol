@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<plugin>
+    <name>fancontrol</name>
+    <author>Your Name</author>
+    <version>1.0</version>
+    <license>GPLv2</license>
+    <min>6.8.0</min>
+    <description>Fan control based on CPU temperature</description>
+    <md5>replace_with_md5_of_fancontrol.sh</md5>
+    <URL>http://your.url/here</URL>
+    <pluginURL>http://your.url/here/fancontrol.plg</pluginURL>
+    
+    <download>
+        <url>http://your.url/here/fancontrol.sh</url>
+        <path>/boot/config/plugins/fancontrol</path>
+        <md5>0c3d3de0de0c8316b1db735882357471</md5>
+    </download>
+    
+    <download>
+        <url>http://your.url/here/readme.txt</url>
+        <path>/boot/config/plugins/fancontrol</path>
+        <md5>9fd9a6a2ebf04cc600106dcaf5f5f8ef</md5>
+    </download>
+
+    <install>
+        <file>/boot/config/plugins/fancontrol/fancontrol.sh</file>
+        <chmod>+x</chmod>
+        <exec>/boot/config/plugins/fancontrol/fancontrol.sh install</exec>
+    </install>
+    
+    <menu>
+        <name>Fan Control</name>
+        <section>Settings</section>
+        <display>settings.php</display>
+    </menu>
+
+    <file>
+        <name>settings.php</name>
+        <path>/usr/local/emhttp/plugins/fancontrol</path>
+        <content>
+<![CDATA[
+<?php
+$plugin = 'fancontrol';
+
+// Save settings
+if ($_POST) {
+    file_put_contents("/boot/config/plugins/$plugin/config.ini", json_encode($_POST));
+    exec("/boot/config/plugins/$plugin/fancontrol.sh restart");
+}
+
+// Load settings
+$config = json_decode(file_get_contents("/boot/config/plugins/$plugin/config.ini"), true);
+?>
+
+<html>
+<head>
+    <title>Fan Control Settings</title>
+    <style>
+        .form-control { width: 300px; }
+    </style>
+</head>
+<body>
+    <h1>Fan Control Settings</h1>
+    <form method="post">
+        <div>
+            <label for="temp_sensor">CPU Temperature Sensor:</label>
+            <select name="temp_sensor" id="temp_sensor" class="form-control">
+                <?php
+                $sensors = glob('/sys/class/thermal/thermal_zone*');
+                foreach ($sensors as $sensor) {
+                    $selected = ($sensor == $config['temp_sensor']) ? 'selected' : '';
+                    echo "<option value='$sensor' $selected>$sensor</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div>
+            <label for="pwm_control">PWM Controller:</label>
+            <select name="pwm_control" id="pwm_control" class="form-control">
+                <?php
+                $pwms = glob('/sys/class/hwmon/hwmon*/pwm*');
+                foreach ($pwms as $pwm) {
+                    $selected = ($pwm == $config['pwm_control']) ? 'selected' : '';
+                    echo "<option value='$pwm' $selected>$pwm</option>";
+                }
+                ?>
+            </select>
+        </div>
+        <div>
+            <label for="pwm_min">Minimum PWM Value:</label>
+            <input type="number" name="pwm_min" id="pwm_min" value="<?= $config['pwm_min'] ?>" class="form-control">
+        </div>
+        <div>
+            <label for="temp_low">Low Temperature Threshold (°C):</label>
+            <input type="number" name="temp_low" id="temp_low" value="<?= $config['temp_low'] ?>" class="form-control">
+        </div>
+        <div>
+            <label for="temp_high">High Temperature Threshold (°C):</label>
+            <input type="number" name="temp_high" id="temp_high" value="<?= $config['temp_high'] ?>" class="form-control">
+        </div>
+        <div>
+            <input type="submit" value="Save Settings" class="btn btn-primary">
+        </div>
+    </form>
+</body>
+</html>
+]]>
+        </content>
+    </file>
+
+    <file>
+        <name>config.ini</name>
+        <path>/boot/config/plugins/fancontrol</path>
+        <content>
+<![CDATA[
+{
+    "temp_sensor": "/sys/class/thermal/thermal_zone0/temp",
+    "pwm_control": "/sys/class/hwmon/hwmon0/pwm1",
+    "pwm_min": 0,
+    "temp_low": 40,
+    "temp_high": 80
+}
+]]>
+        </content>
+    </file>
+</plugin>
