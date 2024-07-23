@@ -4,7 +4,7 @@
     <author>Your Name</author>
     <version>1.0</version>
     <license>GPLv2</license>
-    <min>6.8.0</min>
+    <min>6.12.0</min>
     <description>Fan control based on CPU temperature</description>
     <md5>replace_with_md5_of_fancontrol.sh</md5>
     <URL>http://your.url/here</URL>
@@ -13,13 +13,13 @@
     <download>
         <url>http://your.url/here/fancontrol.sh</url>
         <path>/boot/config/plugins/fancontrol</path>
-        <md5>0c3d3de0de0c8316b1db735882357471</md5>
+        <md5>replace_with_md5_of_fancontrol.sh</md5>
     </download>
     
     <download>
         <url>http://your.url/here/readme.txt</url>
         <path>/boot/config/plugins/fancontrol</path>
-        <md5>9fd9a6a2ebf04cc600106dcaf5f5f8ef</md5>
+        <md5>replace_with_md5_of_readme.txt</md5>
     </download>
 
     <install>

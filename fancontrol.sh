@@ -14,6 +14,21 @@ install_packages() {
     fi
 }
 
+# Function to handle install command
+handle_install() {
+    install_packages
+}
+
+# Handle script arguments
+case "$1" in
+    install)
+        handle_install
+        exit 0
+        ;;
+    *)
+        ;;
+esac
+
 # Create the config.ini file with default values if it doesn't exist
 if [ ! -f $CONFIG_FILE ]; then
     cat <<EOL > $CONFIG_FILE
